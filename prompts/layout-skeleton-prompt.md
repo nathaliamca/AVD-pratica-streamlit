@@ -1,21 +1,19 @@
-# Template: rascunho de layout → esqueleto do app
-
-Preencha cada bloco e envie à ferramenta de IA.
+# Prompt de layout — síntese da conversa
 
 ## Contexto
 
-<!-- Quem você é, qual a disciplina/projeto, qual o dataset e o objetivo do dashboard. -->
+Estou fazendo o Dashboard 1 da Aula 21 com meu dataset de obesidade. Como organizo o app usando minha EDA original e o CSV tratado em data/clean/?
 
 ## Entrada
 
-<!-- Anexe a imagem do rascunho e cite o caminho dela no repositório (ex.: prompts/rascunho_dashboard1.jpg). Informe também as colunas do dataset e as perguntas que o dashboard deve responder. -->
+Coloque os filtros na lateral e as áreas de distribuição e correlação em abas, com nomes em português. Pode fazer um rascunho bem simples mostrando essa organização?
 
-<!-- Opcional, se a ferramenta de IA não aceitar imagem ou interpretar mal o rascunho: descreva o layout em poucas linhas (ex.: sidebar à esquerda com 2 filtros; topo com 3 métricas; abaixo, 2 gráficos lado a lado). -->
+Imagem registrada em entregas/rascunho-dashboard1.png.
 
 ## Restrições
 
-<!-- Regras que a resposta deve respeitar: biblioteca (Streamlit, plotly), arquivos a editar (app.py), carregar dados via src/data_loader.py, o que NÃO deve ser feito. -->
+Mantenha minha análise original e carregue o dado tratado por src/data_loader.py. Implemente um seletor de variáveis e sliders de intervalo. Deixe os gráficos para a Aula 22.
 
 ## Formato de saída
 
-<!-- Como você quer a resposta: código completo do app.py, só o esqueleto com comentários # TODO, explicação breve de cada seção, etc. -->
+Esqueleto do app.py com sidebar, filtros e espaços para distribuição e correlação, usando comentários TODO para os gráficos.
