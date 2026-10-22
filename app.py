@@ -3,76 +3,55 @@ import streamlit as st
 
 from src.data_loader import load_data
 
-st.set_page_config(
-    page_title="Avaliação de Correlação entre Variáveis Quantitativas do Heart Disease Dataset",
-    layout="wide",
-)
-
-st.title("Avaliação de Correlação entre Variáveis Quantitativas do Heart Disease Dataset")
-
+st.set_page_config(page_title="Análise de obesidade", layout="wide")
+st.title("Obesidade: explorando os dados")
 df = load_data()
 
-# Variáveis quantitativas do estudo (mesma lista VARS_QUANT do notebook de EDA)
-VARS_QUANT = ["age", "trestbps", "chol", "thalach", "oldpeak"]
+VARS_QUANT = ["Age", "Height", "Weight", "FCVC", "NCP", "CH2O", "FAF", "TUE"]
+NOMES = {
+    "Age": "Idade (anos)", "Height": "Altura (m)", "Weight": "Peso (kg)",
+    "FCVC": "Consumo de vegetais", "NCP": "Refeições principais",
+    "CH2O": "Consumo de água", "FAF": "Atividade física",
+    "TUE": "Uso de dispositivos eletrônicos",
+}
 
-# Sidebar: filtros (variáveis + intervalo)
 with st.sidebar:
     st.header("Filtros")
-
     variaveis = st.multiselect(
-        "Variáveis Quantitativas",
-        options=VARS_QUANT,
-        default=VARS_QUANT,
-        help="Selecione as variáveis quantitativas que deseja analisar no dashboard.",
+        "Variáveis da análise", options=VARS_QUANT, default=VARS_QUANT,
+        format_func=lambda nome: NOMES.get(nome, nome),
     )
-
-    separar_por_classe = st.toggle(
-        "Distinguir por Classe",
-        value=False,
-        help="Colore a distribuição pela classe (doenca_cardiaca: Normal ou Cardíaco).",
-    )
-
-    # Um slider de intervalo para cada variável selecionada
+    separar_por_classe = st.toggle("Comparar por status de obesidade", value=False)
     intervalos = {}
     for var in variaveis:
         if pd.api.types.is_integer_dtype(df[var]):
             minimo, maximo, passo = int(df[var].min()), int(df[var].max()), 1
         else:
-            minimo, maximo, passo = float(df[var].min()), float(df[var].max()), 0.1
+            minimo, maximo, passo = float(df[var].min()), float(df[var].max()), 0.01
+        if minimo == maximo:
+            intervalos[var] = (minimo, maximo)
+            continue
         intervalos[var] = st.slider(
-            f"Intervalo de {var}",
-            min_value=minimo,
-            max_value=maximo,
-            value=(minimo, maximo),
-            step=passo,
-            key=f"intervalo_{var}",
+            f"Intervalo: {NOMES[var]}", min_value=minimo, max_value=maximo,
+            value=(minimo, maximo), step=passo, key=f"intervalo_{var}",
         )
 
-# Mantém só os pacientes dentro de todos os intervalos escolhidos
 df_filtrado = df
 for var, (inicio, fim) in intervalos.items():
     df_filtrado = df_filtrado[df_filtrado[var].between(inicio, fim)]
+st.caption(f"{len(df_filtrado)} de {len(df)} participantes dentro dos intervalos escolhidos.")
 
-st.caption(f"{len(df_filtrado)} de {len(df)} pacientes dentro dos intervalos escolhidos.")
-
-# Dashboard 1: correlação (heatmap) à esquerda, distribuição (histograma) à direita
-col_correlacao, col_distribuicao = st.columns([1, 1.5])
-
-with col_correlacao:
-    st.subheader("Correlação")
-
-    if len(variaveis) < 2:
-        st.warning("Selecione pelo menos 2 variáveis para calcular a correlação.")
-    else:
-        # TODO: matriz de correlação das variáveis selecionadas (df_filtrado[variaveis].corr())
-        # TODO: heatmap (plotly px.imshow) e exibir com st.plotly_chart
-        pass
-
-with col_distribuicao:
-    st.subheader("Distribuição")
-
-    # TODO: st.selectbox para escolher a variável do histograma
-    # TODO: histograma (plotly px.histogram) e exibir com st.plotly_chart
-    #       se separar_por_classe: color="doenca_cardiaca"
-
-# TODO: Dashboard 2 — KPIs (Aula 22)
+if not variaveis:
+    st.info("Selecione uma ou mais variáveis na lateral para começar.")
+elif df_filtrado.empty:
+    st.info("Nenhum participante neste recorte. Amplie os intervalos na lateral.")
+else:
+    distribuicao, correlacao = st.tabs(["Distribuição", "Relações entre variáveis"])
+    with distribuicao:
+        st.subheader("Como os valores se distribuem?")
+        # TODO Aula 22: seletor da variável e histograma por status_obesidade.
+    with correlacao:
+        st.subheader("Quais medidas variam juntas?")
+        if len(variaveis) < 2:
+            st.info("Selecione ao menos duas variáveis para calcular a correlação.")
+        # TODO Aula 22: calcular e apresentar a matriz de correlação.
