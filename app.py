@@ -98,8 +98,8 @@ else:
             df_filtrado, x=var_hist,
             color="status_obesidade" if separar_por_classe else None,
             labels={**NOMES, "status_obesidade": "Status de obesidade"},
-            color_discrete_sequence=["#167D8D"],
-            color_discrete_map={"Obeso": "#167D8D", "Não Obeso": "#93C7A6"},
+            color_discrete_sequence=["#C74736"],
+            color_discrete_map={"Obeso": "#6A3D78", "Não Obeso": "#ED6A5A"},
             barmode="overlay", opacity=0.75, nbins=20,
         )
         fig.update_layout(yaxis_title="Participantes", bargap=0.04, height=430, dragmode=False)
@@ -116,7 +116,7 @@ else:
             matriz = matriz.rename(index=NOMES, columns=NOMES)
             fig_corr = px.imshow(
                 matriz, text_auto=".2f", zmin=-1, zmax=1,
-                color_continuous_scale=["#426A9A", "#F4F7F5", "#237F63"],
+                color_continuous_scale=["#6A3D78", "#FFF8F2", "#C74736"],
                 aspect="auto", labels={"color": "Spearman"},
             )
             fig_corr.update_layout(height=550, dragmode=False)

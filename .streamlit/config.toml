@@ -1,20 +1,14 @@
-# Configuração do Streamlit. Descomente e ajuste conforme o projeto avançar.
-# O tema pode ser trocado pelo menu ⋮ → Settings → Choose app theme.
-
+# Summer Sunset: coral, pêssego, dourado e roxo.
 [theme]
-paddingTop = "0.5rem"     # espaço abaixo da barra do topo (valor entre aspas)
-# font = "sans serif"     # "sans serif", "serif" ou "monospace"
-
-[theme.light]
-primaryColor = "#ff4b4b"            # cor de destaque (widgets, links)
-backgroundColor = "#ffffff"         # fundo da página
-secondaryBackgroundColor = "#f0f2f6"  # fundo da sidebar e de widgets
-textColor = "#31333f"               # cor do texto
-borderColor = "#d5dae5"
-
-[theme.dark]
-primaryColor = "#ff4b4b"
-backgroundColor = "#0e1117"
-secondaryBackgroundColor = "#262730"
-textColor = "#fafafa"
-borderColor = "#41444e"
+base = "light"
+font = "sans serif"
+headingFont = "sans serif"
+primaryColor = "#C74736"
+backgroundColor = "#FFF8F2"
+secondaryBackgroundColor = "#FFEEE5"
+textColor = "#39263F"
+borderColor = "#D8B9B3"
+chartCategoricalColors = ["#6A3D78", "#ED6A5A", "#F6B65B", "#BC5D85", "#985E49", "#9C659C", "#C74736"]
+showWidgetBorder = true
+showSidebarBorder = true
+paddingTop = "1rem"
