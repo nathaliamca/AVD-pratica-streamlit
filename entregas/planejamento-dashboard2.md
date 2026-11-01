@@ -1,65 +1,63 @@
 # Planejamento do Dashboard 2 — Perfil da amostra
 
-Etapa 4 da Aula 22. Definições feitas antes do rascunho e da implementação do Dashboard 2.
+A ideia deste dashboard é mostrar um resumo das pessoas da base de obesidade e permitir comparar grupos usando os filtros. Os dados usados são os mesmos que foram tratados na análise original.
 
-## 1. Variáveis selecionadas
+## 1. Informações usadas
 
-- `Age`: idade em anos, para filtro, média e dispersão.
-- `Weight`: peso em kg, para média e dispersão.
-- `Gender`: gênero registrado na base, para filtro.
-- `family_history_with_overweight`: histórico familiar de sobrepeso, para filtro.
-- `status_obesidade`: classificação binária criada na EDA, para proporção e cores.
-- `NObeyesdad`: sete categorias originais de peso, para gráfico de contagens.
+- Idade: para selecionar uma faixa etária, calcular a média e comparar com o peso.
+- Peso: para calcular a média e mostrar sua relação com a idade.
+- Gênero: para filtrar o grupo.
+- Histórico familiar de sobrepeso: para comparar pessoas com e sem esse histórico.
+- Classificação Obeso ou Não Obeso: para calcular o percentual e separar as cores dos pontos.
+- As sete categorias originais de peso: para mostrar a quantidade de pessoas em cada uma.
 
-Fonte: `data/clean/dataset.csv`, com o tratamento da EDA preservado.
-Público: pessoas que desejam explorar o perfil dos participantes desta base.
+## 2. Números que aparecem no painel
 
-## 2. Métricas propostas
+O painel terá quatro cartões:
 
-Todas usam o mesmo recorte após os filtros e, quando existir, a seleção no gráfico.
+- Quantidade de participantes: quantas pessoas ficaram no grupo depois dos filtros.
+- Percentual classificado como Obeso: qual parte desse grupo tem essa classificação.
+- Idade média: um resumo das idades das pessoas selecionadas.
+- Peso médio: um resumo dos pesos, em quilos.
 
-| Métrica | Cálculo | Tipo de métrica básica | O que comunica |
-| --- | --- | --- | --- |
-| Participantes | Número de linhas | Contagem absoluta | Tamanho do grupo e contexto das demais métricas. |
-| Classificados como Obeso (%) | 100 × quantidade com status Obeso / participantes | Proporção relativa | Participação dessa classificação dentro do grupo selecionado. |
-| Idade média (anos) | Soma de Age / valores válidos de Age | Média aritmética | Idade central do recorte. |
-| Peso médio (kg) | Soma de Weight / valores válidos de Weight | Média aritmética | Resumo do peso do grupo, sem interpretar peso isolado como diagnóstico. |
+A quantidade é uma contagem, o percentual é uma proporção e os outros dois valores são médias. Todos devem considerar o mesmo grupo. Os motivos de cada escolha estão no arquivo de justificativa das métricas.
 
-Sem participantes: contagem zero, demais métricas como “—” e aviso para ampliar os filtros. Não dividir por zero.
-Sem valores válidos em uma medida: mostrar “—” para sua média.
-Não usar deltas: não há período temporal ou meta definidos para comparação.
-“Não Obeso” reúne as categorias restantes conforme a EDA; não significa necessariamente peso normal.
-A proporção descreve esta base, que inclui registros sintéticos, e não estima a prevalência na população.
+Se os filtros não retornarem ninguém, a quantidade será zero e os outros cartões mostrarão “—”. Não haverá comparação com meses anteriores, porque a base não tem datas.
 
-## 3. Widgets definidos antes do rascunho
+## 3. Filtros
 
-| Widget | Opções e padrão | Efeito |
-| --- | --- | --- |
-| Seletor de gênero | Todos (padrão), Feminino, Masculino; mapear para Gender | Filtrar o Dashboard 2. |
-| Slider de idade | Limites da base; intervalo completo por padrão | Filtrar Age com limites inclusivos. |
-| Seletor de histórico familiar | Todos (padrão), Sim, Não; mapear para yes/no | Filtrar family_history_with_overweight. |
-| Botão “Limpar filtros” | Restaurar padrões e remover seleção gráfica | Voltar ao recorte completo. |
+Antes de desenhar a tela, os controles definidos foram:
 
-Não filtrar por status de obesidade inicialmente: selecionar apenas Obeso tornaria a proporção automaticamente 100%.
-Os filtros serão independentes dos sliders do Dashboard 1, com chaves próprias.
-Como a base não contém datas, não usar seletor de período.
+- Gênero: Todos, Feminino ou Masculino.
+- Intervalo de idade: uma barra para escolher a menor e a maior idade do grupo, incluindo os dois limites.
+- Histórico familiar de sobrepeso: Todos, Sim ou Não.
+- Limpar filtros: um botão para voltar às opções iniciais e desfazer a seleção feita no gráfico.
 
-## 4. Layout e interação planejados
+Ao abrir o dashboard, todas as pessoas da base estarão incluídas. Esses filtros serão separados dos usados no Dashboard 1.
 
-Rascunho: `entregas/rascunho-dashboard2.png`.
+Não haverá um filtro para selecionar apenas Obeso, pois isso faria o percentual ficar sempre em 100%.
 
-- Abas principais futuras: Dashboard 1 e Dashboard 2.
-- Título “Perfil da amostra”, seguido de uma faixa horizontal de filtros.
-- Quatro cartões de métricas e dois gráficos Altair.
-- Barras: participantes em cada categoria original de peso, com rótulos em português e ordem fixa das sete categorias.
-- Dispersão: idade × peso, com cor por status e tooltip com idade, peso e categoria.
-- Seleção de uma região na dispersão: métricas e barras usam os participantes selecionados. Sem seleção, usar todo o recorte dos widgets.
-- Na implementação, usar a seleção retornada pelo Streamlit para aplicar o mesmo recorte às métricas e às barras; uma seleção Altair isolada não atualiza automaticamente st.metric.
-- Exibir contagens antes e depois da seleção gráfica para deixar explícito o denominador das métricas.
+## 4. Organização da tela
 
-## Identidade visual
+O aplicativo terá duas abas principais: Dashboard 1 e Dashboard 2. Na segunda, o título será “Perfil da amostra”. Os filtros ficarão em uma faixa no topo, seguidos pelos quatro cartões.
 
-Paleta inspirada em Summer Sunset: fundo creme `#FFF8F2`, superfícies pêssego `#FFEEE5`, destaque coral escuro `#C74736`, coral `#ED6A5A`, dourado `#F6B65B` e roxo `#6A3D78`. Texto escuro `#39263F` e fonte sans serif.
-Roxo representa Obeso e coral representa Não Obeso, com a mesma convenção no app.
-O dourado é apoio visual, sem texto claro sobre ele.
-O rascunho é esquemático, sem métricas calculadas ou resultados simulados.
+Abaixo dos cartões, haverá dois gráficos feitos com Altair:
+
+- Barras: mostram quantas pessoas estão em cada uma das sete categorias de peso, com os nomes em português. As categorias sem participantes também aparecerão, com quantidade zero.
+- Idade e peso: cada ponto representa um registro da base. As cores separam Obeso e Não Obeso. Ao passar o mouse, aparecem a idade, o peso e a categoria.
+
+Ao arrastar e selecionar uma região no gráfico de idade e peso, os cartões e as barras serão atualizados para esse grupo. Sem essa seleção, serão consideradas todas as pessoas que atendem aos filtros. A tela também mostrará quantas pessoas ficaram após os filtros e quantas entraram no cálculo dos cartões.
+
+O desenho dessa organização está em [rascunho-dashboard2.png](rascunho-dashboard2.png).
+
+## 5. Cores
+
+A paleta escolhida é Summer Sunset, com fundo creme, áreas em pêssego e detalhes em coral, dourado e roxo. O texto será escuro para facilitar a leitura.
+
+Nos gráficos, roxo representa Obeso e coral representa Não Obeso. Essa combinação será mantida nos dois dashboards.
+
+## Cuidados com os resultados
+
+A classificação Não Obeso segue o agrupamento da análise original e inclui outras categorias além de peso normal. O peso médio deve ser observado junto dos gráficos, pois sozinho não determina a classificação de obesidade.
+
+Os números descrevem esta base, que também contém registros gerados artificialmente. Eles não representam toda a população.

@@ -1,29 +1,31 @@
 # Justificativa das métricas — Dashboard 2
 
-O dashboard “Perfil da amostra” apresenta o grupo selecionado na base de obesidade. Seu público são pessoas interessadas em explorar o perfil dos participantes e comparar recortes da amostra.
+O Dashboard 2 mostra um resumo das pessoas da base de obesidade. As quatro métricas ajudam a entender o grupo que aparece depois de aplicar os filtros.
 
-| Métrica | Relação com métricas básicas | Por que foi escolhida e o que comunica |
-| --- | --- | --- |
-| Participantes | Contagem absoluta de linhas | Mostra o tamanho do grupo. Dá contexto às médias e proporções, especialmente quando os filtros deixam poucos registros. |
-| Obeso no recorte (%) | Proporção: 100 × registros classificados como Obeso / total do recorte | Permite comparar a composição de grupos com tamanhos diferentes. O denominador é sempre a contagem de participantes exibida ao lado. |
-| Idade média (anos) | Média aritmética dos valores válidos de Age | Resume o perfil etário do grupo. Ajuda a contextualizar comparações entre filtros, sem substituir a distribuição de idades. |
-| Peso médio (kg) | Média aritmética dos valores válidos de Weight | Resume o peso dos participantes selecionados. Deve ser lida junto da dispersão e das categorias de peso; peso isolado não define diagnóstico. |
+## Quantidade de participantes
 
-## Filtros e seleção vinculada
+Mostra quantas pessoas estão no grupo selecionado. Esse número é importante porque os filtros podem deixar o grupo bem pequeno. Assim, dá para saber quantos registros estão sendo usados nos outros cálculos. É uma contagem simples.
 
-Gênero, idade e histórico familiar definem o recorte inicial, independentemente do Dashboard 1. Arrastar uma região no gráfico idade × peso restringe esse recorte e atualiza as quatro métricas e as barras de categorias. Sem seleção gráfica, usar todos os participantes que atendem aos filtros. O app informa as duas contagens.
+## Percentual classificado como Obeso
 
-As barras mostram contagens por categoria original, em ordem fixa, incluindo categorias com zero participantes. A dispersão mostra heterogeneidade que as médias escondem. Ambos usam Altair.
+Mostra qual parte do grupo está classificada como Obeso. O percentual ajuda a comparar grupos com quantidades diferentes de pessoas, em vez de olhar só o número de casos. O cálculo divide a quantidade de pessoas nessa classificação pelo total do grupo e multiplica por 100.
 
-Não há filtro de status de obesidade: selecionar apenas Obeso tornaria a proporção trivialmente 100%. Não há filtro de período nem deltas, pois a base não tem datas ou meta de comparação definida.
+## Idade média
 
-## Cuidados de interpretação e casos vazios
+Ajuda a entender a idade das pessoas do grupo e como esse perfil muda com os filtros. É calculada somando as idades e dividindo pela quantidade de idades válidas. A média sozinha não mostra se as pessoas têm idades próximas ou muito diferentes.
 
-- Sem participantes: contagem 0 e demais métricas “—”; não calcular divisão por zero.
-- Sem valores válidos para uma média: mostrar “—”.
-- Não Obeso segue o agrupamento da EDA e inclui categorias além de peso normal.
-- A base contém registros sintéticos. O percentual descreve os registros deste recorte e não representa uma estimativa de prevalência populacional.
-- Médias são sensíveis a valores extremos. Os gráficos complementam a leitura dos cartões.
-- Associações observadas são descritivas, sem estabelecer causa e efeito.
+## Peso médio
 
-Planejamento anterior à implementação: `planejamento-dashboard2.md`. Layout: `rascunho-dashboard2.png`.
+Resume o peso do grupo em quilos e permite observar como ele muda ao selecionar pessoas com características diferentes. O cálculo soma os pesos e divide pela quantidade de pesos válidos. Pessoas com pesos muito altos ou baixos podem influenciar a média, por isso ela aparece junto dos gráficos. O peso sozinho não determina a classificação de obesidade.
+
+## Como os filtros entram nos cálculos
+
+Os filtros de gênero, idade e histórico familiar atualizam as quatro métricas. Ao selecionar uma região no gráfico de idade e peso, os números e o gráfico de barras passam a considerar somente as pessoas daquela região. Sem essa seleção, são usadas todas as pessoas que atendem aos filtros.
+
+Não foi colocado um filtro para mostrar apenas Obeso, porque isso faria o percentual ficar sempre em 100%. Também não há filtro por período, pois a base não tem datas.
+
+## O que considerar na leitura
+
+Os resultados se referem a esta base, que também contém registros gerados artificialmente, e não representam toda a população. A classificação Não Obeso inclui outras categorias além de peso normal, conforme o agrupamento feito na análise original.
+
+Quando os filtros não retornam ninguém, a quantidade fica em zero e as outras métricas mostram “—”. Esse símbolo também aparece quando não há valores válidos para calcular uma média. Os gráficos ajudam a observar diferenças que as médias não mostram, mas as relações vistas neles não provam que uma variável causa a outra.
