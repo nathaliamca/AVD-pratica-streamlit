@@ -94,12 +94,15 @@ class Dashboard2Tests(unittest.TestCase):
         self.assertEqual(app.metric[0].value, str(len(esperado)))
         self.assertEqual(app.metric[2].value, f"{esperado.Age.mean():.1f}".replace(".", ","))
         graficos = app.get("vega_lite_chart")
-        self.assertEqual(len(graficos), 2)
-        grafico_barras = next(g for g in graficos if json.loads(g.proto.spec).get("mark", {}).get("type") == "bar")
+        self.assertEqual(len(graficos), 3)
+        grafico_barras = next(g for g in graficos if json.loads(g.proto.spec).get("encoding", {}).get("y", {}).get("field") == "Categoria")
         spec = json.loads(grafico_barras.proto.spec)
         self.assertEqual(spec["mark"]["type"], "bar")
         dados_barras = pa.ipc.open_stream(grafico_barras.proto.datasets[0].data.data).read_all().to_pandas()
         pd.testing.assert_frame_equal(dados_barras.reset_index(drop=True), contar_categorias(esperado))
+        histograma = next(g for g in graficos if json.loads(g.proto.spec).get("encoding", {}).get("x", {}).get("field") == "Weight")
+        dados_histograma = pa.ipc.open_stream(histograma.proto.datasets[0].data.data).read_all().to_pandas()
+        pd.testing.assert_frame_equal(dados_histograma.reset_index(drop=True), esperado[["Weight"]].reset_index(drop=True))
 
 
 if __name__ == "__main__":

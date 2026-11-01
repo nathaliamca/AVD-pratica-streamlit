@@ -5,7 +5,7 @@ import streamlit as st
 from src.data_loader import load_data
 from src.dashboard1 import calcular_correlacao
 from src.dashboard2 import (filtrar_perfil, aplicar_selecao, calcular_metricas,
-    criar_dispersao, criar_barras)
+    criar_dispersao, criar_barras, criar_histograma_peso)
 
 st.set_page_config(
     page_title="Análise de obesidade",
@@ -174,7 +174,7 @@ with dashboard2:
         dados_selecionados = dados_perfil
         st.info("Nenhum participante neste grupo. Amplie os filtros ou clique em Limpar filtros.")
     else:
-        st.caption("Arraste uma região na dispersão para atualizar as métricas e as barras. Dê duplo clique no gráfico para remover a seleção.")
+        st.caption("Arraste uma região na dispersão para atualizar as métricas, as barras e o histograma. Dê duplo clique no gráfico para remover a seleção.")
         coluna_barras, coluna_dispersao = st.columns(2)
         with coluna_barras:
             st.subheader("Categorias de peso")
@@ -188,6 +188,10 @@ with dashboard2:
         dados_selecionados = aplicar_selecao(dados_perfil, selecao)
         with area_barras.container():
             st.altair_chart(criar_barras(dados_selecionados), width="stretch", key="d2_barras")
+        st.subheader("Distribuição do peso")
+        st.caption("Cada barra mostra quantos participantes estão em uma faixa de peso no recorte atual.")
+        st.altair_chart(criar_histograma_peso(dados_selecionados), width="stretch",
+            key="d2_histograma_peso")
         if dados_selecionados.empty:
             st.info("Nenhum participante na região selecionada. Dê duplo clique na dispersão para limpar a seleção.")
 
@@ -202,4 +206,3 @@ with dashboard2:
             texto = "—" if valor is None else f"{valor:.1f}{unidade}".replace(".", ",")
             cartao.metric(titulo, texto)
     area_contagem.caption(f"{len(dados_perfil)} participantes após os filtros · {len(dados_selecionados)} no recorte das métricas.")
-    st.caption("Percentual referente a esta base, que inclui registros sintéticos. Não Obeso também inclui categorias diferentes de peso normal.")

@@ -80,3 +80,16 @@ def criar_barras(dados):
         )
         .properties(height=340)
     )
+
+
+def criar_histograma_peso(dados):
+    return (
+        alt.Chart(dados[["Weight"]]).mark_bar(color="#6A3D78")
+        .encode(
+            x=alt.X("Weight:Q", bin=alt.Bin(maxbins=20), title="Peso (kg)"),
+            y=alt.Y("count():Q", title="Participantes", axis=alt.Axis(tickMinStep=1)),
+            tooltip=[alt.Tooltip("Weight:Q", bin=True, title="Faixa de peso (kg)"),
+                alt.Tooltip("count():Q", title="Participantes")],
+        )
+        .properties(height=280)
+    )
