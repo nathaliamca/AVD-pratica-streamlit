@@ -1,5 +1,6 @@
 import pandas as pd
 import plotly.express as px
+from plotly.subplots import make_subplots
 import streamlit as st
 
 from src.data_loader import load_data
@@ -55,7 +56,7 @@ with dashboard1:
         separar_por_classe = st.toggle(
             "Comparar por status de obesidade",
             value=False,
-            help="Separa o histograma em Obeso e Não Obeso, conforme sua EDA.",
+            help="Separa os histogramas em Obeso e Não Obeso, conforme sua EDA.",
         )
 
         # Um slider de intervalo para cada variável selecionada
@@ -93,20 +94,33 @@ with dashboard1:
         tab_distribuicao, tab_correlacao = st.tabs(["Distribuição", "Relações entre variáveis"])
         with tab_distribuicao:
             st.subheader("Como os valores se distribuem?")
-            var_hist = st.selectbox(
-                "Medida para explorar", variaveis,
-                format_func=lambda nome: NOMES.get(nome, nome),
-                key="variavel_histograma",
+            st.caption("Veja lado a lado as distribuições das medidas selecionadas na lateral. Cada medida tem sua própria escala.")
+            colunas = min(2, len(variaveis))
+            linhas = (len(variaveis) + colunas - 1) // colunas
+            fig = make_subplots(
+                rows=linhas, cols=colunas,
+                subplot_titles=[NOMES[var] for var in variaveis],
+                horizontal_spacing=0.12, vertical_spacing=0.10,
             )
-            fig = px.histogram(
-                df_filtrado, x=var_hist,
-                color="status_obesidade" if separar_por_classe else None,
-                labels={**NOMES, "status_obesidade": "Status de obesidade"},
-                color_discrete_sequence=["#C74736"],
-                color_discrete_map={"Obeso": "#6A3D78", "Não Obeso": "#ED6A5A"},
-                barmode="overlay", opacity=0.75, nbins=20,
-            )
-            fig.update_layout(yaxis_title="Participantes", bargap=0.04, height=430, dragmode=False)
+            for indice, var in enumerate(variaveis):
+                linha, coluna = indice // colunas + 1, indice % colunas + 1
+                histograma = px.histogram(
+                    df_filtrado, x=var,
+                    color="status_obesidade" if separar_por_classe else None,
+                    labels={**NOMES, "status_obesidade": "Status de obesidade"},
+                    color_discrete_sequence=["#C74736"],
+                    color_discrete_map={"Obeso": "#6A3D78", "Não Obeso": "#ED6A5A"},
+                    barmode="overlay", opacity=0.75, nbins=20,
+                )
+                for trace in histograma.data:
+                    trace.showlegend = separar_por_classe and indice == 0
+                    # Cada medida precisa de intervalos próprios para o histograma.
+                    trace.bingroup = var
+                    fig.add_trace(trace, row=linha, col=coluna)
+                fig.update_xaxes(title_text=NOMES[var], row=linha, col=coluna)
+                fig.update_yaxes(title_text="Participantes", row=linha, col=coluna)
+            fig.update_layout(barmode="overlay", bargap=0.04, height=360 * linhas + 70,
+                dragmode=False, legend_title_text="Status de obesidade")
             st.plotly_chart(fig, width="stretch", key="histograma",
                 config={"displayModeBar": False, "scrollZoom": False})
 

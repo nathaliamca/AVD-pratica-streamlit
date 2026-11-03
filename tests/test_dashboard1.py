@@ -42,10 +42,11 @@ class Dashboard1Tests(unittest.TestCase):
         self.app.multiselect[0].set_value(["Weight"]).run()
         self.sem_erros()
         self.assertEqual(len(self.graficos()), 1)
-        self.assertEqual(self.app.selectbox[0].value, "Weight")
+        self.assertEqual(self.graficos()[0]["layout"]["xaxis"]["title"]["text"], "Peso (kg)")
         self.app.multiselect[0].set_value(["Age", "Weight"]).run()
         self.sem_erros()
         self.assertEqual(len(self.graficos()), 2)
+        self.assertEqual(len(self.graficos()[0]["data"]), 2)
 
     def test_filtros_recalculam_dados_e_correlacao(self):
         self.app.multiselect[0].set_value(["Age", "Weight"]).run()
@@ -68,17 +69,23 @@ class Dashboard1Tests(unittest.TestCase):
         self.sem_erros()
         hist = self.graficos()[0]
         self.assertEqual({t["name"] for t in hist["data"]}, set(esperado.status_obesidade))
-        for trace in hist["data"]:
+        self.assertEqual(len(hist["data"]), 4)
+        for trace in hist["data"][:2]:
             np.testing.assert_allclose(
                 valores_plotly(trace["x"]),
                 esperado.loc[esperado.status_obesidade == trace["name"], "Age"],
             )
 
-    def test_remover_variavel_do_histograma(self):
-        self.app.selectbox[0].set_value("Weight").run()
+    def test_subplots_acompanham_variaveis_selecionadas(self):
+        hist = self.graficos()[0]
+        self.assertEqual(len(hist["data"]), 8)
+        self.assertNotEqual(hist["layout"]["xaxis"]["domain"], hist["layout"]["xaxis2"]["domain"])
         self.app.multiselect[0].set_value(["Age", "Height"]).run()
         self.sem_erros()
-        self.assertIn(self.app.selectbox[0].value, ["Age", "Height"])
+        hist = self.graficos()[0]
+        self.assertEqual(len(hist["data"]), 2)
+        for trace, variavel in zip(hist["data"], ["Age", "Height"]):
+            np.testing.assert_allclose(valores_plotly(trace["x"]), self.dados[variavel])
 
     def test_recorte_vazio_e_recuperacao(self):
         self.app.multiselect[0].set_value(["Age", "Weight"]).run()
